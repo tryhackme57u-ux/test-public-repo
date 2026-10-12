@@ -1,0 +1,26 @@
+name: Security Test
+on: 
+  workflow_dispatch:
+jobs:
+  test-oidc:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get OIDC token
+        id: oidc
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken()
+            console.log('OIDC Token length:', token.length)
+            console.log('OIDC Token (first 50):', token.substring(0, 50))
+            core.setOutput('token', token)
+      - name: Print secret
+        run: echo "Secret length: ${{ secrets.TEST_SECRET | length }}"
+      - name: Print env
+        run: |
+          echo "GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN | length }}"
+          echo "TEST_SECRET set: ${{ secrets.TEST_SECRET != '' }}"
