@@ -1,8 +1,13 @@
 name: Test Workflow
-on: [push]
+on: 
+  push:
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: echo "Hello World"
+        env:
+          TEST_SECRET: ${{ secrets.TEST_SECRET }}
+      - run: echo "Secret value length: ${#TEST_SECRET}"
